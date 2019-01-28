@@ -1,49 +1,54 @@
 require("dotenv").config();
 var keys = require("./keys.js");
-
+var fs = require("fs");
 var Spotify = require('node-spotify-api');
 var axios = require("axios");
-var inquirer = require("inquirer");
+// var inquirer = require("inquirer");
 var bandsintown = require("bandsintown");
 var omdb = require("omdb");
 var moment = require('moment');
+
 moment().format();
 var action = process.argv[2];
-var item = process.argv[3];
 
-switch (action) {
+
+var pick = function(action, functionData){
+    switch (action) {
     case "movie-this":
-        movie();
+        movie(functionData);
         break;
 
     case "concert-this":
-        artist();
+        artist(functionData);
         break;
 
     case "spotify-this-song":
-        song();
+        song(functionData);
         break;
 
-    // case "do-what-it-says":
-    //     says();
-    //     break;
+    case "do-what-it-says":
+        says();
+        break;
 }
 
 
-var token = "BQDv1z5TZcFtaexLD_sljPnGCRD05cn9sEErBn7AyNVmpJvcuWGyrBO83qZKbp1iW07sEgK1OHxL0yr8sJBtP1wDeAN0K_IrbdC4ymEybGvaLehZuPnSHyxeRHsGzqt7EsVBr"
 
-function song(){
-    var name = process.argv[3];
-    var spotify = new Spotify(keys.spotify)
 
-    // axios.get("https://api.spotify.com/v1/search?q=" + name +  process.env.SPOTIFY_ID).then(
-    //         function (response) {
-    //             console.log(response)
-    //             console.log(song)
-
-    //             console.log(process.env.SPOTIFY_ID);
-
-                spotify.search({ type: 'track', query: name }, function(err, data) {
+function song(functionData) {
+    var spotify = new Spotify(keys.spotify);
+    var name = functionData;
+    var args = process.argv;
+ 
+    for (var i = 3; i < args.length; i++) {
+ 
+        if (i > 3 && i < args.length) {
+            name = name + "+" + args[i];
+        }
+        else {
+            name += args[i];
+        }
+    }
+                spotify.search({ type: 'track', query: name, limit: 1}, function(err, data) {
                     if (err) {
                       return console.log('Error occurred: ' + err);
                     }
@@ -52,6 +57,7 @@ function song(){
                     for (var key in data.tracks.items){
                         console.log(data.tracks.items[key].artists[0].name);
                         console.log(data.tracks.items[key].preview_url);
+                        console.log(data.tracks.items[key].name);
                         console.log(data.tracks.items[key].album.name);
                         
                     }  
@@ -61,6 +67,17 @@ function song(){
 
 
 function artist() {
+    var args = process.argv;
+    var item = "";
+    for (var i = 3; i < args.length; i++) {
+ 
+        if (i > 3 && i < args.length) {
+            item = item + "+" + args[i];
+        }
+        else {
+            item += args[i];
+        }
+    }
     axios.get("https://rest.bandsintown.com/artists/" + item + "/events?app_id=trilogy").then(
         function (response) {
 
@@ -85,7 +102,18 @@ function artist() {
 
 
 function movie() {
-    var movieChoice = process.argv[3];
+    var movieChoice = "";
+    var args = process.argv;
+    for (var i = 3; i < args.length; i++) {
+ 
+        if (i > 3 && i < args.length) {
+            movieChoice = movieChoice + "+" + args[i];
+        }
+        else {
+            movieChoice += args[i];
+        }
+    }
+    
     axios.get("http://www.omdbapi.com/?t=" + movieChoice + "&y=&plot=short&apikey=trilogy").then(
         function (response) {
             //title of the movie
@@ -105,8 +133,40 @@ function movie() {
             //actors in the movie
             console.log("Actors: " + response.data.Actors);
 
-            console.log(process.env.SPOTIFY_ID);
+            
         }
     )
 }
+
+function says(){
+// fs is a core Node package for reading and writing files
+
+// It's important to include the "utf8" parameter or the code will provide stream data (garbage)
+// The code will store the contents of the reading inside the variable "data"
+fs.readFile("random.txt", "utf8", function(error, data) {
+
+  // If the code experiences any errors it will log the error to the console.
+  if (error) {
+    return console.log(error);
+  }
+
+  // We will then print the contents of data
+ 
+  console.log(data);
+
+
+ // Then split it by commas (to make it more readable)
+  var dataArr = data.split(",");
+
+  pick(dataArr[0], dataArr[1]);
+
+ })
+}
+}
+
+pick(process.argv[2], process.argv[3]);
+
+ 
+
+
 

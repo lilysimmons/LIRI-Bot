@@ -28,13 +28,13 @@ Navigate to the repository. In the command line, start the application by typing
 3. movie-this
 4. do-what-it-says
 
-#How to enter the commands
+##How to enter the commands
 
-node liri.js concert-this <band name here>
-node liri.js spotify-this-song <song name here>
-node liri.js movie this <movie name here>
-node liri.js do-what-it-says 
+* node liri.js concert-this <band name here>
+* node liri.js spotify-this-song <song name here>
+* node liri.js movie this <movie name here>
+* node liri.js do-what-it-says 
 
-The "do-what-it-says" does not need an additional argument, because it reads from the random.txt file.  The text file contains a "spotify-this-song" command, but you can add any of the commands above to the text file.
+The "do-what-it-says" function does not need an additional argument, because it reads commands from the random.txt file.  The text file contains a "spotify-this-song" command, but you can add any of the commands above to the text file and LIRI will do what it says.
 
 

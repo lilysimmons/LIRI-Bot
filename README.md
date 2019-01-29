@@ -16,10 +16,12 @@ spotify, OMDB, Bands in Town, Moment.js, axios
 npm install...
 ```
 
-example:  npm install node-spotify-api
+example:  
+```
+npm install node-spotify-api
+```
 
-
-## USAGE
+### USAGE
 
 Navigate to the repository. In the command line, start the application by typing "node liri.js" into the command line and typing one of the for commands after "node liri.js."  Commands for LIRI are:
 

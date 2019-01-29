@@ -1,3 +1,4 @@
+//required installations
 require("dotenv").config();
 var keys = require("./keys.js");
 var fs = require("fs");
@@ -7,9 +8,13 @@ var axios = require("axios");
 var bandsintown = require("bandsintown");
 var omdb = require("omdb");
 var moment = require('moment');
-
 moment().format();
+
+//global variables
 var action = process.argv[2];
+var functionDataRaw = process.argv.splice(3, process.argv.length-1);
+var functionData = functionDataRaw.join(' ');
+
 
 
 var pick = function(action, functionData){
@@ -29,26 +34,37 @@ var pick = function(action, functionData){
     case "do-what-it-says":
         says();
         break;
+
+    default: 
+    case "spotify-this-song":
+    defaultSearch = 'The Sign';
+    song(defaultSearch);
+    
+         
+}
 }
 
 
 
 
 function song(functionData) {
+    // console.log("hi")
     var spotify = new Spotify(keys.spotify);
-    var name = functionData;
-    var args = process.argv;
+    // var input = functionData;
+    // var args = process.argv;
+
+    // console.log(functionData);
+    // console.log(input);
+    // for (var i = 3; i < args.length; i++) {
  
-    for (var i = 3; i < args.length; i++) {
- 
-        if (i > 3 && i < args.length) {
-            name = name + "+" + args[i];
-        }
-        else {
-            name += args[i];
-        }
-    }
-                spotify.search({ type: 'track', query: name, limit: 1}, function(err, data) {
+    //     if (i > 3 && i < args.length) {
+    //         name = name + "+" + args[i];
+    //     }
+    //     else {
+    //         name += args[i];
+    //     }
+    // }
+                spotify.search({ type: 'track', query: functionData, limit: 1}, function(err, data) {
                     if (err) {
                       return console.log('Error occurred: ' + err);
                     }
@@ -67,17 +83,20 @@ function song(functionData) {
 
 
 function artist() {
-    var args = process.argv;
-    var item = "";
-    for (var i = 3; i < args.length; i++) {
+    // var args = process.argv;
+    var item = functionData;
+    // console.log(functionData);
+    // for (var i = 3; i < args.length; i++) {
  
-        if (i > 3 && i < args.length) {
-            item = item + "+" + args[i];
-        }
-        else {
-            item += args[i];
-        }
-    }
+    //     if (i > 3 && i < args.length) {
+    //         item = item + "+" + args[i];
+    //     }
+    //     else {
+    //         item += args[i];
+    //     }
+    // }
+    // console.log(item);
+
     axios.get("https://rest.bandsintown.com/artists/" + item + "/events?app_id=trilogy").then(
         function (response) {
 
@@ -95,24 +114,30 @@ function artist() {
 
 
         }
+
     )
+
+    .catch(function(err){
+        console.log(`Sorry, I don't know that one.`)
+
+    })
 }
 
 
 
 
 function movie() {
-    var movieChoice = "";
-    var args = process.argv;
-    for (var i = 3; i < args.length; i++) {
+    var movieChoice = functionData;
+    // var args = process.argv;
+    // for (var i = 3; i < args.length; i++) {
  
-        if (i > 3 && i < args.length) {
-            movieChoice = movieChoice + "+" + args[i];
-        }
-        else {
-            movieChoice += args[i];
-        }
-    }
+    //     if (i > 3 && i < args.length) {
+    //         movieChoice = movieChoice + "+" + args[i];
+    //     }
+    //     else {
+    //         movieChoice += args[i];
+    //     }
+    // }
     
     axios.get("http://www.omdbapi.com/?t=" + movieChoice + "&y=&plot=short&apikey=trilogy").then(
         function (response) {
@@ -152,19 +177,26 @@ fs.readFile("random.txt", "utf8", function(error, data) {
 
   // We will then print the contents of data
  
-  console.log(data);
+//   console.log(data);
 
 
  // Then split it by commas (to make it more readable)
   var dataArr = data.split(",");
+//   console.log(dataArr);
+//   console.log(dataArr[0], dataArr[1]);
+  action1 = dataArr[0];
+  functionData1 = dataArr[1];
+  
+  pick(action1, functionData1);
 
-  pick(dataArr[0], dataArr[1]);
+//   pick(dataArr[0], dataArr[1]);
 
  })
-}
+
 }
 
-pick(process.argv[2], process.argv[3]);
+
+pick(action, functionData);
 
  
 
